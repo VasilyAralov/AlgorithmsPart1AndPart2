@@ -7,11 +7,15 @@ public class Solver {
   private Board board;
   private int moves;
   private SolveNode prev;
+  private int hamming;
+  private int manhattan;
   
   private SolveNode(Board b, int m, SolveNode p) {
    board = b;
    moves = m;
    prev = p;
+   hamming = b.hamming();
+   manhattan = b.manhattan() + m;
   }
   
  }
@@ -20,7 +24,7 @@ public class Solver {
 
   @Override
   public int compare(SolveNode o1, SolveNode o2) {
-   return o1.board.manhattan() + o1.moves - o2.board.manhattan() - o2.moves;
+   return o1.manhattan - o2.manhattan;
   }
   
  }
@@ -29,7 +33,7 @@ public class Solver {
 
   @Override
   public int compare(SolveNode o1, SolveNode o2) {
-   return o1.board.hamming() - o2.board.hamming();
+   return o1.hamming - o2.hamming;
   }
   
  }
