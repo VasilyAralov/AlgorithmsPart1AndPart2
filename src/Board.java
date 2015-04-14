@@ -142,9 +142,9 @@ public class Board {
     }
    }
   }
-  int i = 0;
+  int i = N - 1;
   while (twinBoard[i][emptyJ] == 0) {
-   i++;
+   i--;
   }
   int swap = twinBoard[i][emptyJ];
   if (emptyJ + 1 == N) {

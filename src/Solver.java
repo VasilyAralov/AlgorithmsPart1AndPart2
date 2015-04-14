@@ -2,128 +2,85 @@ import java.util.Comparator;
 
 public class Solver {
 
- private MinPQ<SearchNode> pq;
+ private class SolveNode {
+  
+  private Board board;
+  private int moves;
+  private SolveNode prev;
+  
+  private SolveNode(Board b, int m, SolveNode p) {
+   board = b;
+   moves = m;
+   prev = p;
+  }
+  
+ }
 
- private MinPQ<SearchNode> pqTwin;
+ private class ByManhattan implements Comparator<SolveNode> {
 
- private SearchNode goal = null;
+  @Override
+  public int compare(SolveNode o1, SolveNode o2) {
+   return o1.board.manhattan() + o1.moves - o2.board.manhattan() - o2.moves;
+  }
+  
+ }
 
- private boolean solvable = true;
+ private class ByHamming implements Comparator<SolveNode> {
 
- private final Comparator<SearchNode> byHamming = new ByHamming();
- private final Comparator<SearchNode> byManhattan = new ByManhattan();
-
+  @Override
+  public int compare(SolveNode o1, SolveNode o2) {
+   return o1.board.hamming() - o2.board.hamming();
+  }
+  
+ }
+ 
+ private boolean solvable = false;
+ private SolveNode goal;
+ private MinPQ<SolveNode> pq;
+ private MinPQ<SolveNode> twin;
+ 
  /**
   * find a solution to the initial board (using the A* algorithm)
   * 
   * @param initial
   */
  public Solver(Board initial) {
-  pq = new MinPQ<SearchNode>(byManhattan);
-  pqTwin = new MinPQ<SearchNode>(byHamming);
-
-  SearchNode initNode = new SearchNode(initial, 0, null);
-  pq.insert(initNode);
-
-  Board twin = initial.twin();
-  SearchNode twinNode = new SearchNode(twin, 0, null);
-  pqTwin.insert(twinNode);
-
-  boolean solved = false;
-  while (!solved) {
-   solved = solve();
+  if (initial == null) {
+   throw new NullPointerException();
+  }
+  pq = new MinPQ<SolveNode>(new ByManhattan());
+  twin = new MinPQ<SolveNode>(new ByHamming());
+  goal = new SolveNode(initial, 0, null);
+  pq.insert(goal);
+  twin.insert(new SolveNode(goal.board.twin(), 0, null));
+  boolean solve = false;
+  while (!solve) {
+   solve = solve();
   }
  }
-
- private class ByHamming implements Comparator<SearchNode> {
-  public int compare(SearchNode n1, SearchNode n2) {
-   return n1.board.hamming() - n2.board.hamming();
-  }
- }
-
- private class ByManhattan implements Comparator<SearchNode> {
-  public int compare(SearchNode n1, SearchNode n2) {
-   return n1.board.manhattan() + n1.moves - n2.board.manhattan() - n2.moves;
-  }
- }
-
- private class SearchNode {
-  private Board board;
-  private int moves;
-  private SearchNode prev;
-
-  private int hash = 0;
-
-  public SearchNode(Board b, int m, SearchNode p) {
-   board = b;
-   moves = m;
-   prev = p;
-  }
-
-  public boolean equals(Object y) {
-   if (y == this)
-    return true;
-   if (y == null)
-    return false;
-   if (y.getClass() != this.getClass())
-    return false;
-
-   SearchNode that = (SearchNode) y;
-   if (that.board.equals(board)) {
-    return true;
-   }
-   return false;
-  }
-
-  public int hashCode() {
-   if (hash != 0) {
-    return hash;
-   }
-   hash = board.toString().hashCode();
-   return hash;
-  }
- }
-
+ 
  private boolean solve() {
-
-  // solve pq
-  SearchNode node = pq.delMin();
-  if (node.board.isGoal()) {
-   goal = node;
+  SolveNode current = pq.delMin();
+  if (current.board.isGoal()) {
+   solvable = true;
+   goal = current;
    return true;
   }
-
-  for (Board board : node.board.neighbors()) {
-   SearchNode n = new SearchNode(board, node.moves + 1, node);
-   if (n.equals(node.prev)) {
+  for (Board neighbor : current.board.neighbors()) {
+   if ((current.prev != null) && (neighbor.equals(current.prev.board))) {
     continue;
    }
-
-   pq.insert(n);
+   SolveNode node = new SolveNode(neighbor, current.moves + 1, current);
+   pq.insert(node);
   }
-
-  // solve twin
-  SearchNode twinNode = pqTwin.delMin();
+  SolveNode twinNode = twin.delMin();
   if (twinNode.board.isGoal()) {
-   solvable = false;
    return true;
   }
-
-  for (Board board : twinNode.board.neighbors()) {
-
-   SearchNode n = new SearchNode(board, node.moves + 1, node);
-   if (n.equals(twinNode.prev)) {
-    continue;
-   }
-
-   pqTwin.insert(n);
-  }
-  Board twin = node.board.twin();
-  twinNode = new SearchNode(twin, 0, null);
-  pqTwin.insert(twinNode);
+  twin.insert(new SolveNode(current.board.twin(), current.moves + 1, null));
   return false;
  }
-
+ 
  /**
   * @return is the initial board solvable?
   */
@@ -145,20 +102,16 @@ public class Solver {
   * @return sequence of boards in a shortest solution; null if no solution
   */
  public Iterable<Board> solution() {
-
-  if (goal == null) {
+  if (!solvable) {
    return null;
   }
-
-  Stack<Board> stack = new Stack<Board>();
-  SearchNode node = goal;
-  stack.push(node.board);
-  while (node.prev != null) {
-   stack.push(node.prev.board);
-   node = node.prev;
-  }
-
-  return stack;
+  Stack<Board> solution = new Stack<Board>();
+  SolveNode solve = goal;
+  do {
+   solution.push(solve.board);
+   solve = solve.prev;
+  } while (solve != null);
+  return solution;
  }
-
+ 
 }
