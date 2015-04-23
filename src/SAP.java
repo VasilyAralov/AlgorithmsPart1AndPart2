@@ -10,7 +10,7 @@ public class SAP {
    dist = new BreadthFirstDirectedPaths(graph, V).distTo(v) + new BreadthFirstDirectedPaths(graph, W).distTo(v);
   }
   
-  public Ancestor(int v, int i, int j) {
+  private Ancestor(int v, int i, int j) {
    this.v = v;
    dist = new BreadthFirstDirectedPaths(graph, i).distTo(v) + new BreadthFirstDirectedPaths(graph, j).distTo(v);
   }
@@ -67,13 +67,9 @@ public class SAP {
  
  private MinPQ<Ancestor> getMinEntry(Iterable<Integer> v, Iterable<Integer> w) {
   SET<Integer> parentV = new SET<Integer>();
-  for (int i : v) {
-   getParents(parentV, i);
-  }
+  getParents(parentV, v);
   SET<Integer> parentW = new SET<Integer>();
-  for (int j : w) {
-   getParents(parentW, j);
-  }
+  getParents(parentW, w);
   MinPQ<Ancestor> min = new MinPQ<Ancestor>();
   for (int entry : parentV) {
    if (parentW.contains(entry)) {
@@ -83,6 +79,7 @@ public class SAP {
   }
   return min;
  }
+ 
  private void getParents(SET<Integer> parents, int v) {
   if (parents.contains(v)) {
    return;
@@ -93,6 +90,12 @@ public class SAP {
   }
  }
 
+ private void getParents(SET<Integer> parents, Iterable<Integer> v) {
+  for (int i : v) {
+   getParents(parents, i);
+  }
+ }
+ 
  private void checkBounds(int v) {
   if ((v >= graph.V()) || (v < 0)) {
    throw new IndexOutOfBoundsException();
