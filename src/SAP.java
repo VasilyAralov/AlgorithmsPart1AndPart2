@@ -2,15 +2,11 @@ public class SAP {
  
  private class Ancestor implements Comparable<Ancestor> {
   private int v;
-  private BreadthFirstDirectedPaths pathFromV;
-  private BreadthFirstDirectedPaths pathFromW;
   private int dist;
   
   private Ancestor(BreadthFirstDirectedPaths v, BreadthFirstDirectedPaths w, int a) {
    this.v = a;
-   pathFromV = v;
-   pathFromW = w;
-   dist = pathFromV.distTo(a) + pathFromW.distTo(a);
+   dist = v.distTo(a) + w.distTo(a);
   }
 
   public Ancestor() {
