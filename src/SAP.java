@@ -1,26 +1,29 @@
 public class SAP {
  
  private class Ancestor implements Comparable<Ancestor> {
-
   private int v;
+  private BreadthFirstDirectedPaths pathFromV;
+  private BreadthFirstDirectedPaths pathFromW;
   private int dist;
   
-  private Ancestor(int v, Iterable<Integer> V, Iterable<Integer> W) {
-   this.v = v;
-   dist = new BreadthFirstDirectedPaths(graph, V).distTo(v) + new BreadthFirstDirectedPaths(graph, W).distTo(v);
+  private Ancestor(BreadthFirstDirectedPaths v, BreadthFirstDirectedPaths w, int a) {
+   this.v = a;
+   pathFromV = v;
+   pathFromW = w;
+   dist = pathFromV.distTo(a) + pathFromW.distTo(a);
   }
-  
-  private Ancestor(int v, int i, int j) {
-   this.v = v;
-   dist = new BreadthFirstDirectedPaths(graph, i).distTo(v) + new BreadthFirstDirectedPaths(graph, j).distTo(v);
+
+  public Ancestor() {
+   v = -1;
+   dist = -1;
   }
 
   @Override
   public int compareTo(Ancestor o) {
-   if (dist > o.dist) {
+   if (this.dist > o.dist) {
     return 1;
    }
-   if (dist < o.dist) {
+   if (this.dist < o.dist) {
     return -1;
    }
    return 0;
@@ -42,42 +45,41 @@ public class SAP {
   if (v == w) {
    return 0;
   }
-  MinPQ<Ancestor> min = getMinEntry(v, w);
-  if (min.isEmpty()) {
-   return -1;
-  }
-  return min.delMin().dist;
+  return getMinEntry(v, w).dist;
  }
 
- private MinPQ<Ancestor> getMinEntry(int i, int j) {
-  SET<Integer> parentV = new SET<Integer>();
-  getParents(parentV, i);
-  SET<Integer> parentW = new SET<Integer>();
-  getParents(parentW, j);
-  MinPQ<Ancestor> min = new MinPQ<Ancestor>();
-  for (int entry : parentV) {
-   if (parentW.contains(entry)) {
-    Ancestor ancestor = new Ancestor(entry, i, j);
-    min.insert(ancestor);
-   }
-  }
-  return min;
-  
- }
- 
- private MinPQ<Ancestor> getMinEntry(Iterable<Integer> v, Iterable<Integer> w) {
+ private Ancestor getMinEntry(int v, int w) {
   SET<Integer> parentV = new SET<Integer>();
   getParents(parentV, v);
   SET<Integer> parentW = new SET<Integer>();
   getParents(parentW, w);
+  BreadthFirstDirectedPaths fromV = new BreadthFirstDirectedPaths(graph, v);
+  BreadthFirstDirectedPaths fromW = new BreadthFirstDirectedPaths(graph, w);
+  return getMinAncestor(parentV, parentW, fromV, fromW); 
+ }
+ 
+ private Ancestor getMinAncestor(SET<Integer> parentV, SET<Integer> parentW, BreadthFirstDirectedPaths fromV, BreadthFirstDirectedPaths fromW) {
   MinPQ<Ancestor> min = new MinPQ<Ancestor>();
   for (int entry : parentV) {
    if (parentW.contains(entry)) {
-    Ancestor ancestor = new Ancestor(entry, v, w);
+    Ancestor ancestor = new Ancestor(fromV, fromW, entry);
     min.insert(ancestor);
    }
   }
-  return min;
+  if (min.isEmpty()) {
+   return new Ancestor();
+  }
+  return min.delMin(); 
+ }
+ 
+ private Ancestor getMinEntry(Iterable<Integer> v, Iterable<Integer> w) {
+  SET<Integer> parentV = new SET<Integer>();
+  getParents(parentV, v);
+  SET<Integer> parentW = new SET<Integer>();
+  getParents(parentW, w);
+  BreadthFirstDirectedPaths fromV = new BreadthFirstDirectedPaths(graph, v);
+  BreadthFirstDirectedPaths fromW = new BreadthFirstDirectedPaths(graph, w);
+  return getMinAncestor(parentV, parentW, fromV, fromW);
  }
  
  private void getParents(SET<Integer> parents, int v) {
@@ -113,11 +115,7 @@ public class SAP {
  public int ancestor(int v, int w) {
   checkBounds(v);
   checkBounds(w);
-  MinPQ<Ancestor> min = getMinEntry(v, w);
-  if (min.isEmpty()) {
-   return -1;
-  } 
-  return min.delMin().v;
+  return getMinEntry(v, w).v;
  }
 
  // length of shortest ancestral path between any vertex in v and any vertex in
@@ -125,11 +123,7 @@ public class SAP {
  public int length(Iterable<Integer> v, Iterable<Integer> w) {
   checkNull(v);
   checkNull(w);
-  MinPQ<Ancestor> min = getMinEntry(v, w);
-  if (min.isEmpty()) {
-   return -1;
-  }
-  return min.delMin().dist;
+  return getMinEntry(v, w).dist;
  }
 
  // a common ancestor that participates in shortest ancestral path; -1 if no
@@ -137,23 +131,22 @@ public class SAP {
  public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
   checkNull(v);
   checkNull(w);
-  MinPQ<Ancestor> min = getMinEntry(v, w);
-  if (min.isEmpty()) {
-   return -1;
-  }
-  return min.delMin().v;
+  Ancestor ancestor = getMinEntry(v, w);
+  return ancestor.v;
  }
 
  // do unit testing of this class
  public static void main(String[] args) {
-  Digraph graph = new Digraph(new In("A://Temp//digraph5.txt"));
+  Digraph graph = new Digraph(new In("A://Temp//digraph2.txt"));
   SAP sap = new SAP(graph);
   /*for (int i = 0; i < 13; i++) {
    for (int j = 0; j < 13; j++) {
     StdOut.println(sap.length(i, j));    
    }
   }*/
-  StdOut.println(sap.length(7, 12));
-  StdOut.println(sap.ancestor(7, 12));
+  StdOut.println(sap.length(2, 3));
+  StdOut.println(sap.ancestor(2, 3));
+  StdOut.println(sap.length(2, 3));
+  StdOut.println(sap.ancestor(2, 3));
  }
 }
