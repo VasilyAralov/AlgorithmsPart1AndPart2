@@ -47,35 +47,30 @@ public class SAP {
  private Ancestor getMinEntry(int v, int w) {
   SET<Integer> parentV = new SET<Integer>();
   getParents(parentV, v);
-  SET<Integer> parentW = new SET<Integer>();
-  getParents(parentW, w);
   BreadthFirstDirectedPaths fromV = new BreadthFirstDirectedPaths(graph, v);
   BreadthFirstDirectedPaths fromW = new BreadthFirstDirectedPaths(graph, w);
-  return getMinAncestor(parentV, parentW, fromV, fromW); 
+  return getMinAncestor(parentV, fromV, fromW); 
  }
- 
- private Ancestor getMinAncestor(SET<Integer> parentV, SET<Integer> parentW, BreadthFirstDirectedPaths fromV, BreadthFirstDirectedPaths fromW) {
-  MinPQ<Ancestor> min = new MinPQ<Ancestor>();
-  for (int entry : parentV) {
-   if (parentW.contains(entry)) {
-    Ancestor ancestor = new Ancestor(fromV, fromW, entry);
-    min.insert(ancestor);
+
+ private Ancestor getMinAncestor(SET<Integer> ancestors, BreadthFirstDirectedPaths fromV, BreadthFirstDirectedPaths fromW) {
+  MinPQ<Ancestor> minAncestors = new MinPQ<Ancestor>();
+  for (int i : ancestors) {
+   if (fromW.hasPathTo(i)) {
+    minAncestors.insert(new Ancestor(fromV, fromW, i));
    }
   }
-  if (min.isEmpty()) {
+  if (minAncestors.isEmpty()) {
    return new Ancestor();
   }
-  return min.delMin(); 
+  return minAncestors.delMin(); 
  }
  
  private Ancestor getMinEntry(Iterable<Integer> v, Iterable<Integer> w) {
   SET<Integer> parentV = new SET<Integer>();
   getParents(parentV, v);
-  SET<Integer> parentW = new SET<Integer>();
-  getParents(parentW, w);
   BreadthFirstDirectedPaths fromV = new BreadthFirstDirectedPaths(graph, v);
   BreadthFirstDirectedPaths fromW = new BreadthFirstDirectedPaths(graph, w);
-  return getMinAncestor(parentV, parentW, fromV, fromW);
+  return getMinAncestor(parentV, fromV, fromW);
  }
  
  private void getParents(SET<Integer> parents, int v) {
@@ -133,16 +128,14 @@ public class SAP {
 
  // do unit testing of this class
  public static void main(String[] args) {
-  Digraph graph = new Digraph(new In("A://Temp//digraph2.txt"));
+  Digraph graph = new Digraph(new In("A://Temp//digraph3.txt"));
   SAP sap = new SAP(graph);
   /*for (int i = 0; i < 13; i++) {
    for (int j = 0; j < 13; j++) {
     StdOut.println(sap.length(i, j));    
    }
   }*/
-  StdOut.println(sap.length(2, 3));
-  StdOut.println(sap.ancestor(2, 3));
-  StdOut.println(sap.length(2, 3));
-  StdOut.println(sap.ancestor(2, 3));
+  StdOut.println(sap.length(7, 9));
+  StdOut.println(sap.ancestor(7, 9));
  }
 }
