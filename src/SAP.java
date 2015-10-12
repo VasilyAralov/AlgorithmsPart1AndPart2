@@ -1,3 +1,8 @@
+import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
+import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.MinPQ;
+import edu.princeton.cs.algs4.SET;
+
 public class SAP {
  
  private class Ancestor implements Comparable<Ancestor> {
@@ -126,16 +131,4 @@ public class SAP {
   return ancestor.v;
  }
 
- // do unit testing of this class
- public static void main(String[] args) {
-  Digraph graph = new Digraph(new In("A://Temp//digraph3.txt"));
-  SAP sap = new SAP(graph);
-  /*for (int i = 0; i < 13; i++) {
-   for (int j = 0; j < 13; j++) {
-    StdOut.println(sap.length(i, j));    
-   }
-  }*/
-  StdOut.println(sap.length(7, 9));
-  StdOut.println(sap.ancestor(7, 9));
- }
 }

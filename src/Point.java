@@ -1,5 +1,7 @@
 import java.util.Comparator;
 
+import edu.princeton.cs.algs4.StdDraw;
+
 public class Point implements Comparable<Point> {
 
  // compare points by slope
@@ -82,7 +84,4 @@ public class Point implements Comparable<Point> {
   return "(" + x + ", " + y + ")";
  }
 
- // unit test
- public static void main(String[] args) {
- }
 }

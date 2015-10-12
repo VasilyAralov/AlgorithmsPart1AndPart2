@@ -1,3 +1,5 @@
+import edu.princeton.cs.algs4.MaxPQ;
+
 public class Outcast {
  
  private class OutcastWord implements Comparable<OutcastWord> {
@@ -43,12 +45,4 @@ public class Outcast {
   return outcast.delMax().noun;
  }
 
- public static void main(String[] args) {
-  // see test client below
-  WordNet word = new WordNet("A:\\Temp\\synsets.txt", "A:\\Temp\\hypernyms.txt");
-  Outcast outcast = new Outcast(word);
-  In in = new In("A:\\Temp\\outcast5.txt");
-  String[] nouns = in.readAllStrings();
-  StdOut.println(outcast.outcast(nouns));
- }
 }

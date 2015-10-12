@@ -195,12 +195,5 @@ public class Board {
   }
   return board;
  }
- 
- public static void main(String[] args) {
-  int[][] array = {{7, 4, 0}, {2, 3, 6}, {8, 5, 1}};
-  Board board1 = new Board(array);
-  Board board2 = new Board(array);
-  StdOut.println(board1.equals(board2));
-  StdOut.println(board2.equals(board1));
- }
+
 }

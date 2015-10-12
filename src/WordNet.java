@@ -1,5 +1,10 @@
 import java.util.HashMap;
 
+import edu.princeton.cs.algs4.Bag;
+import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdOut;
+
 public class WordNet {
 
  private HashMap<String, Bag<Integer>> data;

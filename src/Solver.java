@@ -1,5 +1,8 @@
 import java.util.Comparator;
 
+import edu.princeton.cs.algs4.MinPQ;
+import edu.princeton.cs.algs4.Stack;
+
 public class Solver {
 
  private class SolveNode {

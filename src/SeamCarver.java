@@ -1,5 +1,8 @@
 import java.awt.Color;
 
+import edu.princeton.cs.algs4.MinPQ;
+import edu.princeton.cs.algs4.Picture;
+
 public class SeamCarver {
 
  private class Pixel implements Comparable<Pixel> {
@@ -253,13 +256,6 @@ public class SeamCarver {
    }
   }
   picture = newPicture;
- }
- 
- public static void main(String[] arg) {
-//  Picture original = new Picture("A:\\Temp\\HJocean.png");
-  Picture original = new Picture("A:\\Temp\\6x5.png");
-  SeamCarver sc = new SeamCarver(original);
-  StdOut.println(sc.energy(1, 1));
  }
  
 }

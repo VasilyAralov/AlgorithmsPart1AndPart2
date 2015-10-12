@@ -1,6 +1,8 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import edu.princeton.cs.algs4.StdRandom;
+
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
 
@@ -106,9 +108,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
  @Override
  public Iterator<Item> iterator() {
   return new RQIterator();
- }
- 
- public static void main(String[] args) {
  }
  
 }
