@@ -43,8 +43,8 @@ public class Deque<Item> implements Iterable<Item> {
 
  private Node first;
  private Node last;
- private int size = 0;
- 
+ private int size;
+
  public boolean isEmpty() {
   return size == 0;
  }
@@ -90,6 +90,7 @@ public class Deque<Item> implements Iterable<Item> {
    throw new NoSuchElementException();
   }
   Item item = first.item;
+  first.item = null;
   switch (size()) {
   case 1: 
    first = null;
@@ -113,6 +114,7 @@ public class Deque<Item> implements Iterable<Item> {
    throw new NoSuchElementException();
   }
   Item item = last.item;
+  last.item = null;
   switch (size()) {
   case 1: 
    first = null;

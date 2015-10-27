@@ -5,10 +5,11 @@ import edu.princeton.cs.algs4.StdDraw;
 public class Point implements Comparable<Point> {
 
  // compare points by slope
- public final Comparator<Point> SLOPE_ORDER = new PointComparator<Point>();
 
- private final int x;                              // x coordinate
- private final int y;                              // y coordinate
+ // x coordinate
+ private final int x;
+ // y coordinate
+ private final int y;
 
  private class PointComparator<Item> implements Comparator<Point> {
   
@@ -77,8 +78,13 @@ public class Point implements Comparable<Point> {
   }
   return 0;
  }
+ 
+ // compare two points by slopes they make with this point
+ public Comparator<Point> slopeOrder() {
+  return new PointComparator<Point>();
+ }
 
-    // return string representation of this point
+ // return string representation of this point
  @Override
  public String toString() {
   return "(" + x + ", " + y + ")";

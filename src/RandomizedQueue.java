@@ -3,25 +3,23 @@ import java.util.NoSuchElementException;
 
 import edu.princeton.cs.algs4.StdRandom;
 
-
 public class RandomizedQueue<Item> implements Iterable<Item> {
 
  private class RQIterator implements Iterator<Item> {
   
   private Item[] iterator;
-  private int size;
+  private int n;
   
   private RQIterator() {
    iterator = (Item[]) new Object[size()];
-   for (int i = 0; i < size(); i++) {
-    iterator[i] = queue[i];
-   }
-   size = size();
+   System.arraycopy(queue, 0, iterator, 0, size());
+   StdRandom.shuffle(iterator);
+   n = 0;
   }
   
   @Override
   public boolean hasNext() {
-   return size > 0;
+   return n < iterator.length;
   }
 
   @Override
@@ -29,11 +27,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
    if (!hasNext()) {
     throw new NoSuchElementException();
    }
-   int n = StdRandom.uniform(size);
    Item item = iterator[n];
-   iterator[n] = iterator[size - 1];
-   iterator[size - 1] = item;
-   size--;
+   iterator[n] = null;
+   n++;
    return item;
   }
   
@@ -45,7 +41,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
  }
  
  private int size = 0;
- private Item[] queue = (Item[]) new Object[32];
+ private Item[] queue = (Item[]) new Object[2];
  
  public boolean isEmpty() {
   return size() == 0;
@@ -60,21 +56,19 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
    throw new NullPointerException();
   }
   if (queue.length <= size) {
-   increase();
+   resize(queue.length * 2);
   }
   queue[size] = item;
   size++;
  }
  
 
- private void increase() {
-  Item[] buf = (Item[]) new Object[queue.length * 2];
-  for (int i = 0; i < size; i++) {
-   buf[i] = queue[i];
-  }
+ private void resize(int n) {
+  Item[] buf = (Item[]) new Object[n];
+  System.arraycopy(queue, 0, buf, 0, size);
   queue = buf;
  }
-
+ 
  public Item dequeue() {
   if (size == 0) {
    throw new NoSuchElementException();
@@ -84,18 +78,10 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
   queue[n] = queue[size - 1];
   queue[size - 1] = null;
   size--;
-  if ((size * 4 <= queue.length) && (queue.length > 32)) {
-   decrease();
+  if ((size * 4 < queue.length) && (queue.length > 1)) {
+   resize(queue.length / 2);
   }
   return item;
- }
- 
- private void decrease() {
-  Item[] buf = (Item[]) new Object[queue.length / 2];
-  for (int i = 0; i < size; i++) {
-   buf[i] = queue[i];
-  }
-  queue = buf;
  }
 
  public Item sample() {

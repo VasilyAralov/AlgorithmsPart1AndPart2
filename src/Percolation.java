@@ -32,6 +32,9 @@ public class Percolation {
  public void open(int i, int j) {
   checkRange(i, j);
   int ufN = getUfN(i, j);
+  if (grid[i - 1][j - 1]) {
+   return;
+  }
 //Open point  
   grid[i - 1][j - 1] = true;
 //Check open/close upper point

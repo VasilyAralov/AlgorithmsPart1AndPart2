@@ -28,7 +28,7 @@ public class Fast {
   Arrays.sort(ap);
   for (int i = 0; i < ap.length - 3; i++) {
    Point[] tap = Arrays.copyOf(ap, ap.length);
-   Arrays.sort(tap, ap[i].SLOPE_ORDER);
+   Arrays.sort(tap, ap[i].slopeOrder());
    int j = 1;
    while (j < tap.length - 2) {
     int max = j + 2;
